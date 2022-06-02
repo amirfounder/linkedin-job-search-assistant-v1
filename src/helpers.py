@@ -35,7 +35,7 @@ def get_params_from_url(url: str):
     params = [param.split('=') for param in url.split('?')[1].split('&')]
     params = {k: v for k, v in params}
     params['page'] = params.get('page', 0)
-    params['keywords'] = unquote(params.get('keywords')).replace(' ', '_')
+    params['keywords'] = unquote(params.get('keywords', '')).replace(' ', '_')
 
     return params
 
@@ -57,6 +57,14 @@ def create_linkedin_profile_html_filename(url: str, seconds_since_loaded: int):
         profile_slug,
         seconds_since_loaded
     )
+
+
+def is_url_profile(url: str):
+    return 'linkedin.com/in/' in url
+
+
+def is_url_search_results(url: str):
+    return 'linkedin.com/search/results/' in url
 
 
 def save_html_contents(html: str, filename: str):
