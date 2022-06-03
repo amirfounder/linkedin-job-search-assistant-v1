@@ -30,7 +30,6 @@ class Menu:
     def show_options(self):
         for option, node in self.options.items():
             print(f'{option}) {node.name}')
-        print()
 
     def add_option(self, option: Node):
         self.options[self.next_key] = option

@@ -1,4 +1,6 @@
+import json
 from abc import abstractmethod, ABC
+from datetime import timezone, datetime
 
 
 class Node(ABC):
@@ -9,11 +11,23 @@ class Node(ABC):
     def run(self):
         try:
             self.terminal.stack.append(self)
-            result = self._invoke()
+            res = self._invoke()
             self.terminal.stack.pop()
-            return result
+            return res
         except Exception as e:
             print(f'Exception: {type(e).__name__}: {str(e)}')
+
+    def pprint(self, obj, *args, dumps=True, **kwargs):
+        if 'nla' not in kwargs:
+            kwargs['nla'] = True
+        if 'nlb' not in kwargs:
+            kwargs['nlb'] = True
+
+        res = json.dumps(obj, indent=4)
+
+        if dumps:
+            return res
+        self.print(res, *args, **kwargs)
 
     @staticmethod
     def print(*args, nlb=False, nla=False, **kwargs):
@@ -78,13 +92,37 @@ class TaskExecutorNode(Node):
         self.func = func
         self.args = args or ()
         self.kwargs = kwargs or {}
+        self.executions = []
 
     def display_info(self):
-        print(f'Executing task: {self.name}')
+        self.print(f'Executing task: {self.name}', nla=True)
 
     def _invoke(self):
-        return self.func(*self.args, **self.kwargs)
+        self.display_info()
+        self.print('STARTING EXECUTION OUTPUT ...', nla=True)
 
+        start = datetime.now(timezone.utc)
+        result = self.func(*self.args, **self.kwargs)
+        end = datetime.now(timezone.utc)
+
+        self.print('ENDING EXECUTION OUTPUT ...', nlb=True)
+
+        execution = {
+            'result': result,
+            'parameters': {
+                'args': self.args,
+                'kwargs': self.kwargs
+            },
+            'performance': {
+                'start': start.isoformat(),
+                'end': end.isoformat(),
+                'elapsed': str(end - start)
+            }
+        }
+
+        self.print('Execution details: ' + self.pprint(execution, dumps=True), nlb=True, nla=True)
+        self.executions.append(execution)
+        return result
 
 class MenuNode(Node):
     def __init__(self, terminal, name, options=None):
@@ -92,7 +130,7 @@ class MenuNode(Node):
         self.menu = self.terminal.menus.create(name, options)
 
     def display_info(self):
-        self.print('Please select one of the following options from the menu:')
+        self.print('Please select one of the following options from the menu:', nla=True)
         self.menu.show_options()
 
     def _invoke(self):
