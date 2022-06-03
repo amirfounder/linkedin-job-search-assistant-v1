@@ -12,6 +12,7 @@ class ActionMenu(Menu):
         self.options: dict[str, Component] = {}
 
     def run(self):
+        self.show_name()
         self.prompt_menu_option_selection()
 
     def register_menu_option(self, item):
@@ -19,18 +20,24 @@ class ActionMenu(Menu):
 
     def prompt_menu_option_selection(self):
         self.show_menu_options()
-        selected_option_key = input()
+        selected_option_key = self.input()
 
         while selected_option_key not in self.options:
+            if selected_option_key == 'X':
+                print('Exiting menu ...')
+                return
+
+            print('You have pressed an invalid key. Please try again.')
+            print()
+
             self.show_menu_options()
-            selected_option_key = input()
+            selected_option_key = self.input()
 
         selected_option = self.options[selected_option_key]
         selected_option.run()
 
     def show_menu_options(self):
-        self.show_name()
-        print('Displaying menu ... (Select a key or \'ESC\' to exit to main menu)\n')
+        print('Displaying menu ... (Select a key or "X" to exit to main menu)\n')
 
         statements = []
         for k, v in self.options.items():
@@ -41,8 +48,7 @@ class ActionMenu(Menu):
 
         for statement in statements:
             print(statement)
-        print('\n')
-
+        print()
 
 class ActionArgsMenu(Menu):
     def __init__(self, name, args: dict[str, Any]):
@@ -58,33 +64,33 @@ class ActionArgsMenu(Menu):
 
     def prompt_menu_option_selection(self):
         self.show_menu_options()
-        selected_option_key = input()
+        selected_option_key = self.input()
 
         while selected_option_key not in self.options:
             self.show_menu_options()
-            selected_option_key = input()
+            selected_option_key = self.input()
 
         name = self.options[selected_option_key]
         value = self.args[name]
 
         print(f'Enter new value for parameter: {name}')
-        new_value = input()
+        new_value = self.input()
 
-        converters = [
+        converter_fns = [
             InputConverter.try_convert_input_to_bool,
             InputConverter.try_convert_input_to_int,
             InputConverter.try_convert_input_to_decimal
         ]
 
-        for converter in converters:
+        for fn in converter_fns:
             if isinstance(new_value, str):
-                new_value = converter(new_value)
+                new_value = fn(new_value)
 
         print(f'Overwriting parameter: {name}: {value} with {new_value}')
 
     def show_menu_options(self):
         self.show_name()
-        print('Displaying menu ... (Select a key or \'ESC\' to exit to main menu)\n')
+        print('Displaying menu ... (Select a key or \'X\' to exit to main menu)\n')
 
         for key, name in self.options.items():
             value = self.args[name]

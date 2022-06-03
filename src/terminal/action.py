@@ -24,13 +24,17 @@ class Action(Component):
     def prompt_args_modifications(self):
         self.show_current_args()
         print('Would you like to modify them? y/n')
-        response = input()
+        print()
+        response = self.input()
 
         while response == 'y':
             self.args_menu.prompt_menu_option_selection()
             self.show_current_args()
+
             print('Would you like to modify them? y/n')
-            response = input()
+            print()
+
+            response = self.input()
 
     def execute(self):
         self.show_name()

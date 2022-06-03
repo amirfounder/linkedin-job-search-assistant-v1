@@ -10,6 +10,12 @@ class Component(ABC):
         self.component_type = component_type
         self.name = name
 
+    @staticmethod
+    def input():
+        res = input('>> ')
+        print()
+        return res
+
     def show_name(self):
         title = f'---  {self.component_type}: {self.name}  ---'
         border = '-' * len(title)
