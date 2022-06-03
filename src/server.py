@@ -1,6 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 from flask_cors import CORS
-from helpers import (
+from .helpers import (
     create_linkedin_profile_html_filename,
     create_linkedin_search_results_html_filename,
     is_url_profile,
@@ -28,8 +28,8 @@ def save_html_controller():
         filename = create_linkedin_profile_html_filename(url, seconds_since_loaded)
         save_html_contents(html, filename)
 
-    return
+    return {'status': 'GOOD'}, 201
 
 
-def run():
+def run_server():
     app.run(port=8080)

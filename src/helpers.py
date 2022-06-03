@@ -1,4 +1,6 @@
 import json
+import webbrowser
+from webbrowser import Chrome
 from os import listdir
 from os.path import isfile
 from urllib.parse import unquote
@@ -40,7 +42,7 @@ def get_params_from_url(url: str):
     return params
 
 
-def create_linkedin_search_results_html_filename(url: str, seconds_since_loaded: int):
+def create_linkedin_search_results_html_filename(url: str, seconds_since_loaded: str):
     params = get_params_from_url(url)
 
     return 'type=search_results&keywords={}&page={}&seconds_since_loaded={}'.format(
@@ -50,7 +52,7 @@ def create_linkedin_search_results_html_filename(url: str, seconds_since_loaded:
     )
 
 
-def create_linkedin_profile_html_filename(url: str, seconds_since_loaded: int):
+def create_linkedin_profile_html_filename(url: str, seconds_since_loaded: str):
     profile_slug = url.split('linkedin.com/in/')[1]
 
     return 'type=profile&profile_slug={}&seconds_since_loaded={}'.format(
@@ -73,5 +75,7 @@ def save_html_contents(html: str, filename: str):
         f.write(html)
 
 
-for query in create_linkedin_search_queries():
-    print(query)
+def open_browser_tab(url: str):
+    chrome_path = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chrome_path))
+    webbrowser.get('chrome').open_new(url)
