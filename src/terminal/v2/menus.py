@@ -1,7 +1,6 @@
 from string import ascii_lowercase
-from typing import Optional
 
-from src.terminal.v2.nodes import ExitNode, Node
+from src.terminal.v2.nodes import ExitNode, ExitProgramNode, ExitToMainMenuNode, Node
 
 
 class Menu:
@@ -42,7 +41,14 @@ class MenuFactory:
         self.terminal = terminal
         self._menus = []
 
-    def create(self, name: str, options: Optional[list[Node]] = None):
-        options.append(ExitNode(self.terminal))
-        self._menus.append(Menu(name, options or []))
-        return self._menus[-1]
+    def create(self, name: str, options=[]):
+        options.extend([
+            ExitNode(self.terminal),
+            ExitToMainMenuNode(self.terminal),
+            ExitProgramNode(self.terminal),
+        ])
+
+        menu = Menu(name, options)
+
+        self._menus.append(menu)
+        return menu

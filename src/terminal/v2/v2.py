@@ -8,10 +8,14 @@ def main():
     terminal = Terminal()
 
     def func():
-        print('this is a test')
+        print('Hello World!')
 
-    executor = terminal.nodes.create(TaskExecutorNode, name='Executor', func=func)
-    menu = terminal.nodes.create(MenuNode, name='Menu', options=[executor])
+    def func2():
+        print('Howdy')
+
+    executor2 = terminal.nodes.create(TaskExecutorNode, name='Print "Howdy"', func=func2)
+    executor = terminal.nodes.create(TaskExecutorNode, name='Print "Hello World"', func=func)
+    menu = terminal.nodes.create(MenuNode, name='Menu', options=[executor, executor2])
     test = terminal.nodes.create(TaskNode, name='Test', menu=menu)
     
     terminal.entrypoint = test

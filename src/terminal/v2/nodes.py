@@ -15,6 +15,22 @@ class Node(ABC):
         except Exception as e:
             print(f'Exception: {type(e).__name__}: {str(e)}')
 
+    @staticmethod
+    def print(*args, nlb=False, nla=False, **kwargs):
+        if nlb:
+            print()
+
+        print(*args, **kwargs)
+
+        if nla:
+            print()
+
+    def input(self):
+        self.print()
+        res = input('>> ')
+        self.print()
+        return res
+
     @abstractmethod
     def display_info(self):
         pass
@@ -76,27 +92,27 @@ class MenuNode(Node):
         self.menu = self.terminal.menus.create(name, options)
 
     def display_info(self):
-        print('Please select one of the following options from the menu:')
+        self.print('Please select one of the following options from the menu:')
         self.menu.show_options()
 
     def _invoke(self):
         self.display_info()
-        menu_key = input('>> ')
+        menu_key = self.input()
 
         while menu_key not in self.menu.options:
-            print('Invalid key selected. Please try again:')
+            self.print('Invalid key selected. Please try again:', nla=True)
             self.display_info()
-            menu_key = input('>> ')
+            menu_key = self.input()
 
         return self.menu.options[menu_key]
 
 
 class ExitNode(Node):
     def __init__(self, terminal):
-        super().__init__(terminal, 'Exit')
+        super().__init__(terminal, 'Exit menu')
         
     def display_info(self):
-        print('Exiting...')
+        print('Exiting ...')
 
     def _invoke(self):
         pass
@@ -107,7 +123,19 @@ class ExitToMainMenuNode(Node):
         super().__init__(terminal, 'Exit to main menu')
 
     def display_info(self):
-        print('Exiting to main menu...')
+        print('Exiting to main menu ...')
 
     def _invoke(self):
-        self.terminal.stack[1:].run()
+        self.terminal.stack = self.terminal.stack[0]
+        self.terminal.stack[-1].run()
+
+
+class ExitProgramNode(Node):
+    def __init__(self, terminal):
+        super().__init__(terminal, 'Exit program')
+
+    def display_info(self):
+        print('Exiting program ...')
+
+    def _invoke(self):
+        self.terminal.keep_running = False
