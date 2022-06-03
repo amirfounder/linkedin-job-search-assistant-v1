@@ -22,12 +22,23 @@ class RecruiterEncoder(JSONEncoder):
 
 class Recruiter:
     keys = [
-        'name',
-        'url',
         'company',
-        'sent_connection_invite',
-        'sent_connection_invite_follow_up',
+        'company_duration',
+        'title',
+        'name',
+        'profile_url',
+        'message_thread_url'
         'last_contacted',
+        'last_scraped',
+        'has_resume_been_sent',
+        'has_been_sent_connection_invite',
+        'has_accepted_connection_invite',
+        'datetime_connection_invite_sent',
+        'connection_invite_note',
+        'has_been_sent_post_connection_follow_up',
+        'has_accepted_post_connection_follow_up',
+        'datetime_post_connection_follow_up_sent',
+        'post_connection_follow_up_note',
     ]
     key_set = set(keys)
 
@@ -51,7 +62,7 @@ def create_file(path):
 
 class CMS:
     def __init__(self):
-        self.path = 'data/cms.json'
+        self.path = 'data/cms/recruiters.json'
         self.header = Recruiter.keys
         self.recruiters = []
         create_file(self.path)

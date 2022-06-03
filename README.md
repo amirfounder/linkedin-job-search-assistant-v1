@@ -12,7 +12,14 @@
 
 ***This entire process will include checkpoints saved in some DB***
 
-### High Level (Part 2 - )
+### High Level (Part 2 - User Actions)
+
+1. Start the program
+2. Program spits out options
+   1. Run extract_info ETL (should be run 1 / month)
+   2. Do outreach
+      1. default strategy = 2 recruiters from same company / 3 days
+   3. Do followups
 
 ### Open LinkedIn and login
 
