@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import timezone, datetime
-from typing import TYPE_CHECKING, Optional, TypeVar, Type, Callable
+from typing import TYPE_CHECKING, Optional, Callable
 
 from .base import Node
 
@@ -54,8 +54,9 @@ class ExecutorNode(Node):
         self.executions.append(execution)
         return result
 
+
 class MenuNode(Node):
-    def __init__(self, terminal: Terminal, name: str = 'Menu Node', options: list[Node] = None):
+    def __init__(self, terminal: Terminal, name: str, options: list[Node] = None):
         super().__init__(terminal, name)
         self.menu = self.terminal.menus.create(name, options)
 
@@ -76,25 +77,3 @@ class MenuNode(Node):
 
     def add_option(self, option):
         self.menu.add_option(option)
-
-
-NodeType = TypeVar('NodeType', Node, ExecutionNode, MenuNode, ExecutorNode)
-
-class NodeFactory:
-    @property
-    def is_empty(self) -> bool:
-        return not self._nodes
-
-    @property
-    def first(self) -> Optional[None]:
-        if self._nodes:
-            return self._nodes[0]
-
-    def __init__(self, terminal):
-        self.terminal = terminal
-        self._nodes = []
-
-    def create(self, cls: Type[NodeType], *args, **kwargs) -> NodeType:
-        node = cls(self.terminal, *args, **kwargs)
-        self._nodes.append(node)
-        return node
