@@ -150,7 +150,7 @@ class ExitNode(Node):
         super().__init__(terminal, 'Exit menu')
         
     def display_info(self):
-        print('Exiting ...')
+        self.print('Exiting menu ...')
 
     def _invoke(self):
         pass
@@ -161,7 +161,7 @@ class ExitToMainMenuNode(Node):
         super().__init__(terminal, 'Exit to main menu')
 
     def display_info(self):
-        print('Exiting to main menu ...')
+        self.print('Exiting to main menu ...')
 
     def _invoke(self):
         self.terminal.stack = self.terminal.stack[0]
@@ -173,7 +173,8 @@ class ExitProgramNode(Node):
         super().__init__(terminal, 'Exit program')
 
     def display_info(self):
-        print('Exiting program ...')
+        self.print('Exiting program ...')
 
     def _invoke(self):
+        self.display_info()
         self.terminal.keep_running = False
