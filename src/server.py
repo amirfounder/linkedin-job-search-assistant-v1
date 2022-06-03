@@ -1,3 +1,5 @@
+from threading import Thread
+
 from flask import Flask, request, make_response
 from flask_cors import CORS
 from .helpers import (
@@ -33,3 +35,16 @@ def save_html_controller():
 
 def run_server():
     app.run(port=8080)
+
+
+def run_server_in_thread(start=True, join=False):
+    thread = Thread(target=run_server)
+    if not start:
+        return thread
+
+    thread.start()
+    if not join:
+        return thread
+
+    thread.join()
+    return thread

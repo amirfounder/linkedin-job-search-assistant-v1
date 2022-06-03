@@ -3,14 +3,12 @@ from threading import Thread
 
 from src.cms import CMS, Recruiter
 from src.helpers import open_browser_tab
-from src.server import run_server
+from src.server import run_server_in_thread
 
 
 if __name__ == '__main__':
-    # server_thread = Thread(target=run_server)
-    # server_thread.start()
-    # open_browser_tab('google.com')
-    # server_thread.join()
+    server_thread = run_server_in_thread()
+    server_thread.join()
 
     cms = CMS()
     cms.load()
