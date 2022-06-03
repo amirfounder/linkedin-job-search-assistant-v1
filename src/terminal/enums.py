@@ -6,3 +6,4 @@ class MenuType:
 class ComponentType:
     Menu = 'MENU'
     Action = 'ACTION'
+    Terminal = 'TERMINAL'
