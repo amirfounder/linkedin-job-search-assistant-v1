@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from datetime import timezone, datetime
 from typing import Optional
-from string import ascii_lowercase
 
 from src.terminal.action import Action
 from src.terminal.menu import ActionMenu
@@ -14,6 +12,7 @@ class Terminal:
         
         main = ActionMenu('LinkedIn Job Search Assistant')
         main.register_menu_option(Action('test', lambda: print('testing')))
+        main.register_menu_option(Action('another one', lambda : print('another one')))
 
         self.entrypoint = main
 

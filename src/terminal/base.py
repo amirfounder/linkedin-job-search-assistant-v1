@@ -10,6 +10,14 @@ class Component(ABC):
         self.component_type = component_type
         self.name = name
 
+    def show_name(self):
+        title = f'---  {self.component_type}: {self.name}  ---'
+        border = '-' * len(title)
+        print(border)
+        print(title)
+        print(border)
+        print()
+
     @abstractmethod
     def run(self):
         pass

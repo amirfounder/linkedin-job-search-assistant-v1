@@ -4,5 +4,5 @@ class MenuType:
 
 
 class ComponentType:
-    Menu = 0
-    Action = 1
+    Menu = 'MENU'
+    Action = 'ACTION'

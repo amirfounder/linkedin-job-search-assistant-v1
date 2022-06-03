@@ -15,25 +15,38 @@ class Action(Component):
     def run(self):
         self.execute()
 
-    def execute(self):
-        print(f'Preparing to execute action: {self.name}')
-        print('Here are this run\'s current parameters:\n')
-
+    def show_current_args(self):
+        print('Here are this run\'s current parameters:')
+        print('')
         print(self.args)
+        print('')
 
-        print('Would you like to modify them?\n(y)es | (n)o\n')
+    def prompt_args_modifications(self):
+        self.show_current_args()
+        print('Would you like to modify them? y/n')
         response = input()
 
-        if response.lower() == 'y':
+        while response == 'y':
             self.args_menu.prompt_menu_option_selection()
+            self.show_current_args()
+            print('Would you like to modify them? y/n')
+            response = input()
 
+    def execute(self):
+        self.show_name()
+        print(f'Preparing to execute function: "{self.name}()"')
+        self.prompt_args_modifications()
+
+        print(f'Running function: "{self.name}()"')
+
+        print()
         result = self.func(**self.args)
+        print()
 
         self.executions.append({
-            'timestamp': datetime.now(timezone.utc),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'result': result,
             'params': self.args
         })
-
         print(self.executions[-1])
         return result

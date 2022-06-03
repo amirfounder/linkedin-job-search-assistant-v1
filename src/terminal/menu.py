@@ -29,15 +29,15 @@ class ActionMenu(Menu):
         selected_option.run()
 
     def show_menu_options(self):
-        print(f'### {self.name} ###')
+        self.show_name()
         print('Displaying menu ... (Select a key or \'ESC\' to exit to main menu)\n')
 
         statements = []
         for k, v in self.options.items():
             if v.component_type == ComponentType.Menu:
-                statements.insert(0, f'{k} ... Navigate to menu: {v.name}')
+                statements.insert(0, f'{k}) Navigate to menu: {v.name}')
             if v.component_type == ComponentType.Action:
-                statements.append(f'{k} ... Execute action: {v.name}')
+                statements.append(f'{k}) Execute action: {v.name}')
 
         for statement in statements:
             print(statement)
@@ -83,7 +83,7 @@ class ActionArgsMenu(Menu):
         print(f'Overwriting parameter: {name}: {value} with {new_value}')
 
     def show_menu_options(self):
-        print(f'### {self.name} ###')
+        self.show_name()
         print('Displaying menu ... (Select a key or \'ESC\' to exit to main menu)\n')
 
         for key, name in self.options.items():
