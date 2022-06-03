@@ -13,7 +13,7 @@ class Terminal:
         self.entrypoint: Optional[ActionMenu] = None
         
         main = ActionMenu('LinkedIn Job Search Assistant')
-        main.register_menu_option(Action('test', lambda x: f'testing: {x}'))
+        main.register_menu_option(Action('test', lambda: print('testing')))
 
         self.entrypoint = main
 

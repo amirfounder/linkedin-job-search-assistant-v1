@@ -45,10 +45,13 @@ class ActionMenu(Menu):
 
 
 class ActionArgsMenu(Menu):
-    def __init__(self, name):
+    def __init__(self, name, args: dict[str, Any]):
         super().__init__(MenuType.ParameterMenu, name)
-        self.options: dict[str, str] = {}
-        self.current_parameters: dict[str, Any] = {}
+        self.args = args
+        self.options = {}
+
+        for k, v in args.items():
+            self.options[self.next_letter] = k
 
     def run(self):
         self.prompt_menu_option_selection()
@@ -62,7 +65,7 @@ class ActionArgsMenu(Menu):
             selected_option_key = input()
 
         name = self.options[selected_option_key]
-        value = self.current_parameters[name]
+        value = self.args[name]
 
         print(f'Enter new value for parameter: {name}')
         new_value = input()
@@ -84,6 +87,6 @@ class ActionArgsMenu(Menu):
         print('Displaying menu ... (Select a key or \'ESC\' to exit to main menu)\n')
 
         for key, name in self.options.items():
-            value = self.current_parameters[name]
+            value = self.args[name]
             print(f'{key} ... Parameter: {name}. Current value: {value}')
         print('\n')
