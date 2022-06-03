@@ -11,13 +11,13 @@ class ActionMenu(Menu):
     def run(self):
         self.terminal.stack.append(self)
         self.show_name()
-        self.prompt_menu_option_selection()
+        self._prompt_menu_option_selection()
 
     def register_menu_option(self, item):
         self.options[self.next_letter] = item
 
-    def prompt_menu_option_selection(self):
-        self.show_menu_options()
+    def _prompt_menu_option_selection(self):
+        self._show_menu_options()
         selected_option_key = self.input()
 
         while selected_option_key not in self.options:
@@ -26,14 +26,14 @@ class ActionMenu(Menu):
                 return
 
             self.print('You have pressed an invalid key. Please try again.')
-            self.show_menu_options()
+            self._show_menu_options()
 
             selected_option_key = self.input()
 
         selected_option = self.options[selected_option_key]
         selected_option.run()
 
-    def show_menu_options(self):
+    def _show_menu_options(self):
         self.print('Displaying menu ... (Select a key or "X" to exit to main menu)\n')
 
         statements = []

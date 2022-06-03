@@ -20,9 +20,9 @@ class Menu(Component, ABC):
         return result
 
     @abstractmethod
-    def show_menu_options(self):
+    def _show_menu_options(self):
         pass
 
     @abstractmethod
-    def prompt_menu_option_selection(self):
+    def _prompt_menu_option_selection(self):
         pass

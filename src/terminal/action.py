@@ -25,20 +25,20 @@ class Action(Component):
 
         return self.executions
 
-    def show_current_args(self):
-        self.print('Here are this run\'s current parameters:')
-        self.pprint(self.args, newline_before=True, newline_after=True)
-
     def prompt_args_modifications(self):
-        self.show_current_args()
+        self._show_current_args()
         print('Would you like to modify them? y/n')
         response = self.input()
 
         while response == 'y':
-            self.args_menu.prompt_menu_option_selection()
-            self.show_current_args()
+            self.args_menu._prompt_menu_option_selection()
+            self._show_current_args()
             self.print('Would you like to modify them? y/n')
             response = self.input()
+
+    def _show_current_args(self):
+        self.print('Here are this run\'s current parameters:')
+        self.pprint(self.args, newline_before=True, newline_after=True)
 
     def _execute(self):
         start = datetime.now(timezone.utc)

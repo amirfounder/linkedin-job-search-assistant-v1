@@ -8,24 +8,23 @@ from src.terminal.utils import try_convert_input
 class ActionArgsMenu(Menu):
     def __init__(self, name, args: dict[str, Any]):
         super().__init__(MenuType.ParameterMenu, name)
-        self.args = args
-        self.options = {}
-
-        for k, v in args.items():
-            self.options[self.next_letter] = k
+        self.arg_pool = args
+        self.options = {
+            'a': 'Register new argument',
+            'b': 'Overwrite argument',
+            'c': 'Delete argument'
+        }
 
     def run(self):
-        self.prompt_menu_option_selection()
+        self._prompt_menu_option_selection()
 
-    def prompt_menu_option_selection(self):
-        self.show_menu_options()
+    def _prompt_menu_option_selection(self):
+        self._show_menu_options()
         selected_option_key = self.input()
 
         while selected_option_key not in self.options:
-            if selected_option_key == 'N':
-                self.prompt_menu_option_registration()
-
-            self.show_menu_options()
+            self.print(f'Invalid option: {selected_option_key}. Please try again')
+            self._show_menu_options()
             selected_option_key = self.input()
 
         name = self.options[selected_option_key]
@@ -53,7 +52,7 @@ class ActionArgsMenu(Menu):
 
         print(f'Successfully registered a new function argument: ({key}) {name}: {value}')
 
-    def show_menu_options(self):
+    def _show_menu_options(self):
         self.show_name()
         print('Displaying menu ... (Select a key or \'X\' to exit to main menu)\n')
 
