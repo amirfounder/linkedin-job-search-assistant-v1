@@ -4,35 +4,44 @@ from src.terminal.v2.nodes import ExitNode, ExitProgramNode, ExitToMainMenuNode,
 
 
 class Menu:
-    def __init__(self, name: str, options: list[Node]):
+    def __init__(self, name: str, default_options: list[Node] = None, options: list[Node] = None):
         self.name = name
+        self._options = options or [] + default_options or []
         self.options = {}
+
+        self._default_options_len = len(default_options)
         self._next_key_idx = 0
-        self._next_key = None
+        self._build_options_map()
 
-        for option in options:
-            key = self.next_key
-            while key in self.options:
-                key = self.next_key
-
-            self.options[key] = option
+    def __contains__(self, item):
+        return item in self.options
 
     @property
-    def next_key_idx(self):
+    def next_key_idx(self) -> int:
         res = self._next_key_idx
         self._next_key_idx += 1
         return res
 
     @property
-    def next_key(self):
+    def next_key(self) -> str:
         return ascii_lowercase[self.next_key_idx]
 
-    def show_options(self):
+    def _build_options_map(self):
+        self._next_key_idx = 0
+        self.options.clear()
+        for option in self._options:
+            key = self.next_key
+            while key in self.options:
+                key = self.next_key
+            self.options[key] = option
+
+    def print_options(self) -> None:
         for option, node in self.options.items():
             print(f'{option}) {node.name}')
 
     def add_option(self, option: Node):
-        self.options[self.next_key] = option
+        self._options.insert(len(self.options) - self._default_options_len, option)
+        self._build_options_map()
 
 
 class MenuFactory:
@@ -40,14 +49,17 @@ class MenuFactory:
         self.terminal = terminal
         self._menus = []
 
-    def create(self, name: str, options=[]):
-        options.extend([
+    def create(self, name: str, options: list = None) -> Menu:
+        if options is None:
+            options = []
+
+        default_options = [
             ExitNode(self.terminal),
             ExitToMainMenuNode(self.terminal),
             ExitProgramNode(self.terminal),
-        ])
+        ]
 
-        menu = Menu(name, options)
+        menu = Menu(name, default_options, options)
 
         self._menus.append(menu)
         return menu

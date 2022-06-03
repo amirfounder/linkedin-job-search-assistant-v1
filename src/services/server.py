@@ -38,7 +38,7 @@ def run_server():
 
 
 def run_server_in_thread(start=True, join=False):
-    thread = Thread(target=run_server)
+    thread = Thread(target=run_server, daemon=True)
     if not start:
         return thread
 

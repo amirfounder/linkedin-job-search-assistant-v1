@@ -20,7 +20,7 @@ class Terminal:
             self.entrypoint.run()
 
     def run_in_thread(self, start=True, join=False):
-        thread = Thread(target=self.run)
+        thread = Thread(target=self.run, daemon=True)
         if start:
             thread.start()
         if join:

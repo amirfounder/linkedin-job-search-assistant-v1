@@ -1,25 +1,12 @@
-import time
-from threading import Thread
+from time import sleep
 
-from src.terminal.action import Action
-from src.terminal.menus.action_menu import ActionMenu
-from src.terminal.terminal import Terminal
-
-
-class MyTerminal(Terminal):
-    def __init__(self):
-
-        main = ActionMenu('LinkedIn Job Search Assistant')
-        main.register_menu_option(Action('test', lambda: print('testing')))
-        main.register_menu_option(Action('another one', lambda: print('another one')))
-
-        super().__init__(main)
+from src.services.server import run_server_in_thread
+from src.terminal.entrypoint import run_terminal_in_thread
 
 
 if __name__ == '__main__':
-    # server_thread = run_server_in_thread()
-    terminal = MyTerminal()
-    terminal.run()
-    # server_thread.join()
-    while True:
-        pass
+    server_thread = run_server_in_thread()
+    sleep(.5)
+    terminal_thread = run_terminal_in_thread()
+    server_thread.join()
+    terminal_thread.join()
