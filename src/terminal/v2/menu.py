@@ -3,7 +3,7 @@ from string import ascii_lowercase
 from src.terminal.v2.nodes import ExitNode, ExitProgramNode, ExitToMainMenuNode, Node
 
 
-class Menu:
+class MenuModel:
     def __init__(self, name: str, default_options: list[Node] = None, options: list[Node] = None):
         self.name = name
         self._options = options or [] + default_options or []
@@ -12,9 +12,6 @@ class Menu:
         self._default_options_len = len(default_options)
         self._next_key_idx = 0
         self._build_options_map()
-
-    def __contains__(self, item):
-        return item in self.options
 
     @property
     def next_key_idx(self) -> int:
@@ -35,10 +32,6 @@ class Menu:
                 key = self.next_key
             self.options[key] = option
 
-    def print_options(self) -> None:
-        for option, node in self.options.items():
-            print(f'{option}) {node.name}')
-
     def add_option(self, option: Node):
         self._options.insert(len(self.options) - self._default_options_len, option)
         self._build_options_map()
@@ -49,7 +42,7 @@ class MenuFactory:
         self.terminal = terminal
         self._menus = []
 
-    def create(self, name: str, options: list = None) -> Menu:
+    def create(self, name: str, options: list = None) -> MenuModel:
         if options is None:
             options = []
 
@@ -59,7 +52,7 @@ class MenuFactory:
             ExitProgramNode(self.terminal),
         ]
 
-        menu = Menu(name, default_options, options)
+        menu = MenuModel(name, default_options, options)
 
         self._menus.append(menu)
         return menu

@@ -3,38 +3,85 @@ from datetime import timezone, datetime
 from typing import TYPE_CHECKING, Optional, Callable
 
 from .base import Node
+from ..menu import MenuModel
 
 if TYPE_CHECKING:
     from ..terminal import Terminal
 
 
-class ExecutionNode(Node):
-    def __init__(self, terminal: Terminal, name: str = 'Execution Node', menu: Optional[MenuNode] = None):
+def now():
+    return datetime.now(timezone.utc)
+
+
+class EntryPoint(Node):
+    def __init__(self, terminal: Terminal, name: str, menu: Menu):
+        super().__init__(terminal, name)
+        self.menu = menu
+        self.pools = []
+
+    def _invoke(self):
+        selected_option = self.menu.run()
+        selected_option.run()
+
+    def create_task_pool(self, name):
+        pool = self.terminal.nodes.create(TaskPool, name=name)
+        self.pools.append(pool)
+        return pool
+
+
+class TaskPool(Node):
+    def __init__(self, terminal: Terminal, name: str, menu: Menu):
+        super().__init__(terminal, name)
+        self.menu = menu
+        self.pools = []
+        self.tasks = []
+
+    def _invoke(self):
+        option = self.menu.run()
+        option.run()
+
+    def create_task_pool(self, name):
+        pool = self.terminal.nodes.create(TaskPool, name=name)
+        self.pools.append(pool)
+        return pool
+
+    def create_task(self):
+        pass
+
+
+class Task(Node):
+    def __init__(self, terminal: Terminal, name: str, menu: Menu):
         super().__init__(terminal, name)
         self.menu = menu
 
     def _invoke(self):
-        node = self.menu.run()
-        node.run()
-
-    def set_menu(self, menu: MenuNode):
-        self.menu = menu
+        option = self.menu.run()
+        option.run()
 
 
-class ExecutorNode(Node):
-    def __init__(self, terminal: Terminal, name: str, func: Callable, args: tuple = None, kwargs: dict = None):
+class Executor(Node):
+    def __init__(
+            self,
+            terminal: Terminal,
+            name: str,
+            service: Callable,
+            args: tuple = None,
+            kwargs: dict = None,
+            safe_invoke: bool = True,
+            print_execution: bool = False,
+    ):
         super().__init__(terminal, name)
-        self.func = func
+        self.service = service
         self.args = args or ()
         self.kwargs = kwargs or {}
+        self.safe_invoke = safe_invoke,
+        self.print_execution = print_execution
         self.executions = []
 
-    def _invoke(self):
-        self.print(f'Executing task: {self.name}', nla=True)
-
-        start = datetime.now(timezone.utc)
-        result = self.func(*self.args, **self.kwargs)
-        end = datetime.now(timezone.utc)
+    def _run_service(self):
+        start = now()
+        result = self.service(*self.args, **self.kwargs)
+        end = now()
 
         execution = {
             'name': self.name,
@@ -50,30 +97,37 @@ class ExecutorNode(Node):
             }
         }
 
-        self.print('Execution details: ' + self.pprint(execution, dumps=True), nlb=True, nla=True)
         self.executions.append(execution)
-        return result
-
-
-class MenuNode(Node):
-    def __init__(self, terminal: Terminal, name: str, options: list[Node] = None):
-        super().__init__(terminal, name)
-        self.menu = self.terminal.menus.create(name, options)
-
-    def show_menu(self):
-        self.print('Please select one of the following options from the menu:', nla=True)
-        self.menu.print_options()
+        return execution
 
     def _invoke(self):
-        self.show_menu()
-        menu_key = self.input()
+        try:
+            execution = self._run_service()
+            if self.print_execution:
+                self.pprint(execution)
+        except Exception as e:
+            print(f'Exception caught: {type(e).__name__} - {str(e)}')
+            if not self.safe_invoke:
+                raise e
 
-        while menu_key not in self.menu:
-            self.print('Invalid key selected. Please try again:', nla=True)
-            self.show_menu()
-            menu_key = self.input()
 
-        return self.menu.options[menu_key]
+class Menu(Node):
+    def __init__(self, terminal: Terminal, name: str, menu: MenuModel):
+        super().__init__(terminal, name)
+        self.menu = menu
 
-    def add_option(self, option):
-        self.menu.add_option(option)
+    def _print_options(self):
+        for option, node in self.menu.options.items():
+            print(f'{option}) {node.name}')
+
+    def _prompt_selection(self):
+        self.print('Please select one of the following options')
+        self._print_options()
+        return self.input()
+
+    def _invoke(self):
+        selection = self._prompt_selection()
+        while selection not in self.menu.options:
+            self.print('Invalid key. Please try again')
+            selection = self._prompt_selection()
+        return self.menu.options[selection]
