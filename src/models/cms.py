@@ -40,11 +40,10 @@ class Recruiter:
         'datetime_post_connection_follow_up_sent',
         'post_connection_follow_up_note',
     ]
-    key_set = set(keys)
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
-            if k in self.key_set:
+            if k in self.keys:
                 setattr(self, k, v)
 
     @classmethod

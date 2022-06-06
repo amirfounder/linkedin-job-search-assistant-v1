@@ -1,0 +1,14 @@
+[
+    {
+        "name": "technical_recruiter",
+        "template": "{company} technical recruiter"
+    },
+    {
+        "name": "technical_sourcing",
+        "template": "{company} technical sourcing"
+    },
+    {
+        "name": "director_of_recruiting",
+        "template": "{company} director of recruiting"
+    }
+]

@@ -1,6 +1,5 @@
 import json
 import webbrowser
-from webbrowser import Chrome
 from os import listdir
 from os.path import isfile
 from urllib.parse import unquote
